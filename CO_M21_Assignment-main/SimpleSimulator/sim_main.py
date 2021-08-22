@@ -7,6 +7,7 @@ R4="0000000000000000"
 R5="0000000000000000"
 R6="0000000000000000"
 FLAGS="0000000000000000"
+global RF 
 RF=[R0,R1,R2,R3,R4,R5,R6,FLAGS]
 global arr
 arr=[]
@@ -342,7 +343,7 @@ def main(array,RF):
         RF=execute(array[pc],RF)
         PC_dump(pc)
         RF_dump(RF)
-        PC_update(array[pc],pc)
+        pc=PC_update(array[pc],pc)
     mem_dump(array)
 for q in stdin:
     if q == '': # If empty string is read then stop the loop
