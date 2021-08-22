@@ -8,12 +8,7 @@ R6="0000000000000000"
 FLAGS="0000000000000000"
 RF=[R0,R1,R2,R3,R4,R5,R6,FLAGS]
 arr = []
-for q in stdin:
-    if q == '': # If empty string is read then stop the loop
-        break
-    q = q.replace("\n", "")
-    arr.append(q)
-main(arr)
+
 def mem_dump(array):
     arr = []
     for i in range(256):
@@ -95,7 +90,7 @@ def execute(line,RF):
         RF=jump_less(line,RF)
     elif (opcode_bin=="10001"):
         RF=jump_great(line,RF)
-    elif (opcode_bin="10010"):
+    elif (opcode_bin=="10010"):
         RF=jump_equal(line,RF)
     return RF
 def PC_dump(pc):
@@ -124,7 +119,12 @@ def main(array):
         RF_dump(RF)
         PC_update(array[pc],pc)
     mem_dump(array)
-
+for q in stdin:
+    if q == '': # If empty string is read then stop the loop
+        break
+    q = q.replace("\n", "")
+    arr.append(q)
+main(arr)
 
 
 
