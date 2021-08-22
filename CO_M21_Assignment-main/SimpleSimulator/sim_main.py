@@ -19,6 +19,7 @@ def add(line,RF):
     k=bin_to_int(k1)+bin_to_int(k2)
     if k<65536:
         RF[indexval(r0)] = int_to_bin(k)
+        RF[7]="0000000000000000"
     else:
         k = k - 65535
         RF[indexval(r0)] = int_to_bin(k)
@@ -43,6 +44,7 @@ def sub(line,RF):
     k=bin_to_int(k1)-bin_to_int(k2)
     if k>=0:
         RF[indexval(r0)] = int_to_bin(k)
+        RF[7]="0000000000000000"
     else:
         for i in range(16):
             over += '0'
@@ -62,11 +64,14 @@ def movimm(line,RF):
     r0=line[5:8]
     val=line[8:]
     RF[indexval(r0)]="00000000"+val
+    RF[7]="0000000000000000"
     return RF
 def mov(line,RF):
     r0=line[10:13]
     r1=line[13:]
-    RF[indexval(r0)]=RF[indexval(r1)]
+    RF[indexval(r0)]=""
+    RF[indexval(r0)]+=RF[indexval(r1)]
+    RF[7]="0000000000000000"
     return RF
 def mul(line,RF):
     r0=line[7:10]
@@ -79,6 +84,7 @@ def mul(line,RF):
     k=bin_to_int(k1)*bin_to_int(k2)
     if k < 65536:
         RF[indexval(r0)] = int_to_bin(k)
+        RF[7]="0000000000000000"
     else:
         k = k - 65535
         RF[indexval(r0)] = int_to_bin(k)
@@ -105,6 +111,7 @@ def div(line,RF):
     j1=int(bin_to_int(k0)%bin_to_int(k1))
     RF[0]=int_to_bin(j0)
     RF[1]=int_to_bin(j1)
+    RF[7]="0000000000000000"
     return RF
 def ls(line,RF):
     imm = line[8:]
@@ -126,6 +133,7 @@ def ls(line,RF):
         for j in res2:
             final_res += j
     RF[indexval(r0)] = final_res
+    RF[7]="0000000000000000"
     return RF
 def rs(line,RF):
     imm = line[8:]
@@ -146,12 +154,13 @@ def rs(line,RF):
         f = k[shift_val:]
         final_res = g+f
     RF[indexval(r0)] = final_res
+    RF[7]="0000000000000000"
     return RF
 def OR(line, RF):
     r0 = line[7:10]
     r1 = line[10:13]
     r2 = line[13:]
-    k0 = RF[indexval(r0)]
+    k0 = []
     k1 = RF[indexval(r1)]
     k2 = RF[indexval(r2)]
     A = list(k1)
@@ -159,17 +168,21 @@ def OR(line, RF):
     i = 0
     while i<16:
         if A[i]=='0' and B[i]=='0':
-            k0[i] = '0'
+            k0.append('0')
         else:
-            k0[i] = '1'
+            k0.append('1')
         i+=1
-    RF[indexval(r0)] = k0
+    res=""
+    for i in k0:
+        res+=i
+    RF[indexval(r0)] = res
+    RF[7]="0000000000000000"
     return RF
 def AND(line, RF):
     r0 = line[7:10]
     r1 = line[10:13]
     r2 = line[13:]
-    k0 = RF[indexval(r0)]
+    k0 = []
     k1 = RF[indexval(r1)]
     k2 = RF[indexval(r2)]
     A = list(k1)
@@ -177,17 +190,21 @@ def AND(line, RF):
     i = 0
     while i<16:
         if A[i]=='1' and B[i]=='1':
-            k0[i] = '1'
+            k0.append('1')
         else:
-            k0[i] = '0'
+            k0.append('0')
         i+=1
-    RF[indexval(r0)] = k0
+    res=""
+    for i in k0:
+        res+=i
+    RF[indexval(r0)] = res
+    RF[7]="0000000000000000"
     return RF
 def XOR(line, RF):
     r0 = line[7:10]
     r1 = line[10:13]
     r2 = line[13:]
-    k0 = RF[indexval(r0)]
+    k0 = []
     k1 = RF[indexval(r1)]
     k2 = RF[indexval(r2)]
     A = list(k1)
@@ -195,11 +212,15 @@ def XOR(line, RF):
     i = 0
     while i<16:
         if A[i]!=B[i]:
-            k0[i] = '1'
+            k0.append('1')
         else:
-            k0[i] = '0'
+            k0.append('0')
         i+=1
-    RF[indexval(r0)] = k0
+    res=""
+    for i in k0:
+        res+=i
+    RF[indexval(r0)] = res
+    RF[7]="0000000000000000"
     return RF
 def NOT(line, RF):
     r0 = line[10:13]
@@ -216,6 +237,7 @@ def NOT(line, RF):
     for i in res2:
         final_res += i
     RF[indexval(r0)] = final_res
+    RF[7]="0000000000000000"
     return RF
 def cmp(line, RF):
     r0 = line[10:13]
@@ -325,6 +347,7 @@ def RF_dump(RF):
     print(*RF)
 def PC_update(line,pc):
     if line[0:5]=="01111":
+        RF[7] = "0000000000000000"
         return bin_to_int(line[8:])
     elif line[0:5]=="10000" and RF[7][13]=="1":
         RF[7] = "0000000000000000"
@@ -352,6 +375,7 @@ def main(array,RF):
         PC_dump(pc)
         RF_dump(RF)
         pc=PC_update(array[pc],pc)
+    RF[7] = "0000000000000000"
     PC_dump(pc)
     RF_dump(RF)
     mem_dump(array)
