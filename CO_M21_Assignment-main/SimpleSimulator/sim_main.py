@@ -1,5 +1,7 @@
 from sys import stdin
+import matplotlib.pyplot as plt
 exef=False
+pc_coordinates=[]
 pflag="0000000000000000"
 R0="0000000000000000"
 R1="0000000000000000"
@@ -11,6 +13,15 @@ R6="0000000000000000"
 FLAGS="0000000000000000"
 RF=[R0,R1,R2,R3,R4,R5,R6,FLAGS]
 arr=[]
+def graphplot(yaxis):
+    plt.subplot()
+    xaxis=[]
+    for i in range(len(yaxis)):
+        xaxis.append(i)
+    plt.plot(xaxis,yaxis)
+    plt.xlabel("cycle")
+    plt.ylabel("Memory_address")
+    plt.savefig("graph.png")
 def add(line,RF):
     r0=line[7:10]
     r1=line[10:13]
@@ -414,12 +425,15 @@ def main(array,RF):
     while array[pc]!="1001100000000000" :
         RF=execute(array[pc],RF)
         PC_dump(pc)
+        pc_coordinates.append(pc)
         RF_dump(RF)
         pc=PC_update(array[pc],pc)
     RF[7] = "0000000000000000"
     PC_dump(pc)
+    pc_coordinates.append(pc)
     RF_dump(RF)
     mem_dump(array)
+    graphplot(pc_coordinates)
 for q in stdin:
     if q == '': # If empty string is read then stop the loop
         break
