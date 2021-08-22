@@ -7,6 +7,13 @@ R5="0000000000000000"
 R6="0000000000000000"
 FLAGS="0000000000000000"
 RF=[R0,R1,R2,R3,R4,R5,R6,FLAGS]
+arr = []
+for q in stdin:
+    if q == '': # If empty string is read then stop the loop
+        break
+    q = q.replace("\n", "")
+    arr.append(q)
+main(arr)
 def mem_dump(array):
     arr = []
     for i in range(256):
@@ -22,7 +29,7 @@ def bin_to_int(inp):
     l = 7
     for i in inp:
         i = int(i)
-        if i = 1:
+        if i == 1:
             k += 2**l
         l-=1
     return k
@@ -64,29 +71,29 @@ def execute(line,RF):
         RF=load(line,RF)
     elif (opcode_bin=="00101"):
         RF=st(line,RF)
-    elif (opcode_bin="00110"):
+    elif (opcode_bin=="00110"):
         RF=mul(line,RF)
-    elif (opcode_bin="00111"):
+    elif (opcode_bin=="00111"):
         RF=div(line,RF)
-    elif (opcode_bin="01000"):
+    elif (opcode_bin=="01000"):
         RF=rs(line,RF)
-    elif (opcode_bin="01001"):
+    elif (opcode_bin=="01001"):
         RF=ls(line,RF)
-    elif (opcode_bin="01010"):
+    elif (opcode_bin=="01010"):
         RF=xor(line,RF)
-    elif (opcode_bin="01011"):
+    elif (opcode_bin=="01011"):
         RF=OR(line,RF)
-    elif (opcode_bin="01100"):
+    elif (opcode_bin=="01100"):
         RF=AND(line,RF)
-    elif (opcode_bin="01101"):
+    elif (opcode_bin=="01101"):
         RF=inv(line,RF)
-    elif (opcode_bin="01110"):
+    elif (opcode_bin=="01110"):
         RF=comp(line,RF)
-    elif (opcode_bin="01111"):
+    elif (opcode_bin=="01111"):
         RF=unc_jump(line,RF)
-    elif (opcode_bin="10000"):
+    elif (opcode_bin=="10000"):
         RF=jump_less(line,RF)
-    elif (opcode_bin="10001"):
+    elif (opcode_bin=="10001"):
         RF=jump_great(line,RF)
     elif (opcode_bin="10010"):
         RF=jump_equal(line,RF)
@@ -117,7 +124,7 @@ def main(array):
         RF_dump(RF)
         PC_update(array[pc],pc)
     mem_dump(array)
-traces()
+
 
 
 
