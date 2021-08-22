@@ -9,7 +9,6 @@ R6="0000000000000000"
 FLAGS="0000000000000000"
 global RF 
 RF=[R0,R1,R2,R3,R4,R5,R6,FLAGS]
-global arr
 arr=[]
 def add(line,RF):
     r0=line[7:10]
@@ -73,6 +72,7 @@ def mul(line,RF):
     r0=line[7:10]
     r1=line[10:13]
     r2=line[13:]
+    over=""
     k0=RF[indexval(r0)]
     k1=RF[indexval(r1)]
     k2=RF[indexval(r2)]
@@ -82,6 +82,19 @@ def mul(line,RF):
     else:
         k = k - 65535
         RF[indexval(r0)] = int_to_bin(k)
+        for i in range(16):
+            over += '0'
+        RF[indexval(r0)] = over
+        res = []
+        for i in range(16):
+            if i!=12:
+                res.append('0')
+            else:
+                res.append('1')
+        k3 = ''
+        for i in range(16):
+            k3+=res[i]
+        RF[7] = k3
     return RF
 def div(line,RF):
     r0=line[10:13]
@@ -236,14 +249,7 @@ def cmp(line, RF):
     RF[7] = k2
     return RF
 def mem_dump(array):
-    arr = []
-    for i in range(256):
-        arr.append("0000000000000000")
-
-    for i in range(len(array)):
-        arr[i] = array[i]
-
-    for i in arr:
+    for i in array:
         print(i)
 def bin_to_int(inp):
     k = 0
@@ -333,11 +339,11 @@ def PC_update(line,pc):
         return pc+1
 def load(line,RF):
     mem_add=line[8:]
-    RF[indexval(line[5:8])]=arr[int_to_bin(mem_add)]
+    RF[indexval(line[5:8])]=mem_state[int_to_bin(mem_add)]
     return RF
 def st(line,RF):
     mem_add=line[8:]
-    arr[bin_to_int(mem_add)]=RF[indexval(line[5:8])]
+    mem_state[bin_to_int(mem_add)]=RF[indexval(line[5:8])]
     return RF
 def main(array,RF):
     pc=0
@@ -354,7 +360,12 @@ for q in stdin:
         break
     q = q.replace("\n", "")
     arr.append(q)
-main(arr,RF)
+mem_state=[]
+for i in range(256):
+    mem_state.append("0000000000000000")
+for i in range(len(arr)):
+    mem_state[i]=arr[i]
+main(mem_state,RF)
 
 
 
