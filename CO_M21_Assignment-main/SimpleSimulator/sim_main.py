@@ -42,7 +42,7 @@ def sub(line,RF):
     k2=RF[indexval(r2)]
     over = ''
     k=bin_to_int(k1)-bin_to_int(k2)
-    if k>-1:
+    if k>=0:
         RF[indexval(r0)] = int_to_bin(k)
     else:
         for i in range(16):
@@ -62,12 +62,12 @@ def sub(line,RF):
 def movimm(line,RF):
     r0=line[5:8]
     val=line[8:]
-    RF[indexval(r0)]=val
+    RF[indexval(r0)]="00000000"+val
     return RF
 def mov(line,RF):
     r0=line[10:13]
     r1=line[13:]
-    RF[indexval(r0)]=RF[indexval(R1)]
+    RF[indexval(r0)]=RF[indexval(r1)]
     return RF
 def mul(line,RF):
     r0=line[7:10]
@@ -278,6 +278,8 @@ def indexval(inp):
         return 5
     elif inp=='110':
         return 6
+    elif inp=='111':
+        return 7
 def execute(line,RF):
     opcode_bin = line[0:5]
     if(opcode_bin == "00000"):
@@ -335,7 +337,7 @@ def load(line,RF):
     return RF
 def st(line,RF):
     mem_add=line[8:]
-    arr[int_to_bin(mem_add)]=RF[indexval(line[5:8])]
+    arr[bin_to_int(mem_add)]=RF[indexval(line[5:8])]
     return RF
 def main(array,RF):
     pc=0
