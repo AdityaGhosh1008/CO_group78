@@ -8,7 +8,36 @@ R6="0000000000000000"
 FLAGS="0000000000000000"
 RF=[R0,R1,R2,R3,R4,R5,R6,FLAGS]
 arr = []
-
+def add(line,RF):
+    r0=line[7:10]
+    r1=line[10:13]
+    r2=line[13:]
+    k0=RF[indexval(r0)]
+    k1=RF[indexval(r1)]
+    k2=RF[indexval(r2)]
+    k=bin_to_int(k1)+bin_to_int(k2)
+    RF[indexval(r0)]=int_to_bin(k)
+    return RF
+def movimm(line,RF):
+    r0=line[5:8]
+    val=line[8:]
+    RF[indexval(r0)]="00000000"+val
+    return RF
+def sub(line,RF):
+    r0=line[7:10]
+    r1=line[10:13]
+    r2=line[13:]
+    k0=RF[indexval(r0)]
+    k1=RF[indexval(r1)]
+    k2=RF[indexval(r2)]
+    k=bin_to_int(k1)-bin_to_int(k2)
+    RF[indexval(r0)]=int_to_bin(k)
+    return RF
+def mov(line,RF):
+    r0=line[10:13]
+    r1=line[13:]
+    RF[indexval(r0)]=RF[indexval(R1)]
+    return RF
 def mem_dump(array):
     arr = []
     for i in range(256):
