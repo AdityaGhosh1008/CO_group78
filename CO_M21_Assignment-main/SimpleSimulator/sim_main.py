@@ -35,6 +35,7 @@ def main(array):
         RF_dump(RF)
         PC_update(array[pc],pc)
     mem_dump(array)
+traces()
 
 
 
