@@ -1,4 +1,6 @@
 from sys import stdin
+exef=False
+pflag="0000000000000000"
 R0="0000000000000000"
 R1="0000000000000000"
 R2="0000000000000000"
@@ -7,7 +9,6 @@ R4="0000000000000000"
 R5="0000000000000000"
 R6="0000000000000000"
 FLAGS="0000000000000000"
-global RF 
 RF=[R0,R1,R2,R3,R4,R5,R6,FLAGS]
 arr=[]
 def add(line,RF):
@@ -309,56 +310,95 @@ def indexval(inp):
     elif inp=='111':
         return 7
 def execute(line,RF):
+    global exef
     opcode_bin = line[0:5]
     if(opcode_bin == "00000"):
         RF=add(line,RF)
+        exef=True
+        return RF
     elif(opcode_bin=="00001"):
         RF=sub(line,RF)
+        exef=True
+        return RF
     elif(opcode_bin=="00010"):
         RF=movimm(line,RF)
+        exef=True
+        return RF
     elif(opcode_bin=="00011"):
         RF=mov(line,RF)
+        exef=True
+        return RF
     elif(opcode_bin=="00100"):
         RF=load(line,RF)
+        exef=True
+        return RF
     elif (opcode_bin=="00101"):
         RF=st(line,RF)
+        exef=True
+        return RF
     elif (opcode_bin=="00110"):
         RF=mul(line,RF)
+        exef=True
+        return RF
     elif (opcode_bin=="00111"):
         RF=div(line,RF)
+        exef=True
+        return RF
     elif (opcode_bin=="01000"):
         RF=rs(line,RF)
+        exef=True
     elif (opcode_bin=="01001"):
         RF=ls(line,RF)
+        exef=True
+        return RF
     elif (opcode_bin=="01010"):
         RF=XOR(line,RF)
+        exef=True
+        return RF
     elif (opcode_bin=="01011"):
         RF=OR(line,RF)
+        exef=True
+        return RF
     elif (opcode_bin=="01100"):
         RF=AND(line,RF)
+        exef=True
+        return RF
     elif (opcode_bin=="01101"):
         RF=NOT(line,RF)
+        exef=True
+        return RF
     elif (opcode_bin=="01110"):
         RF=cmp(line,RF)
-    return RF
+        exef=True
+        return RF
+    else:
+        pflag=RF[7]
+        RF[7]="0000000000000000"
+        return RF
 def PC_dump(pc):
     print((bin(pc)[2:]).zfill(8),end=" ")
 def RF_dump(RF):
     print(*RF)
 def PC_update(line,pc):
-    if line[0:5]=="01111":
-        RF[7] = "0000000000000000"
-        return bin_to_int(line[8:])
-    elif line[0:5]=="10000" and RF[7][13]=="1":
-        RF[7] = "0000000000000000"
-        return bin_to_int(line[8:])
-    elif line[0:5]=="10001"and RF[7][14]=="1":
-        RF[7] = "0000000000000000"
-        return bin_to_int(line[8:])
-    elif line[0:5]=="10010"and RF[7][15]=="1":
-        RF[7] = "0000000000000000"
-        return bin_to_int(line[8:])
+    global pflag
+    if line[0:5]=="01111" or line[0:5]=="10000" or line[0:5]=="10001" or line[0:5]=="10010":
+        if line[0:5]=="01111":
+            RF[7] = "0000000000000000"
+            return bin_to_int(line[8:])
+        elif line[0:5]=="10000" and pflag[13]=="1":
+            RF[7] = "0000000000000000"
+            return bin_to_int(line[8:])
+        elif line[0:5]=="10001"and pflag[14]=="1":
+            RF[7] = "0000000000000000"
+            return bin_to_int(line[8:])
+        elif line[0:5]=="10010"and pflag[15]=="1":
+            RF[7] = "0000000000000000"
+            return bin_to_int(line[8:])
+        else:
+            RF[7]="0000000000000000"
+            return pc+1
     else:
+
         return pc+1
 def load(line,RF):
     mem_add=line[8:]
@@ -369,6 +409,7 @@ def st(line,RF):
     mem_state[bin_to_int(mem_add)]=RF[indexval(line[5:8])]
     return RF
 def main(array,RF):
+    global exef
     pc=0
     while array[pc]!="1001100000000000" :
         RF=execute(array[pc],RF)
