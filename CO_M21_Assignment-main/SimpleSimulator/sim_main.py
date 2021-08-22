@@ -256,7 +256,7 @@ def bin_to_int(inp):
     return k
 def int_to_bin(inp):
     ut = ""
-    for i in range(7, -1, -1):
+    for i in range(15, -1, -1):
         if 2 ** i <= inp:
             inp = inp % (2 ** i)
             ut += "1"
@@ -344,6 +344,8 @@ def main(array,RF):
         PC_dump(pc)
         RF_dump(RF)
         pc=PC_update(array[pc],pc)
+    PC_dump(pc)
+    RF_dump(RF)
     mem_dump(array)
 for q in stdin:
     if q == '': # If empty string is read then stop the loop
