@@ -7,7 +7,89 @@ R5="0000000000000000"
 R6="0000000000000000"
 FLAGS="0000000000000000"
 RF=[R0,R1,R2,R3,R4,R5,R6,FLAGS]
+def mem_dump(array):
+    arr = []
+    for i in range(256):
+        arr.append("0000000000000000")
+
+    for i in range(len(array)):
+        arr[i] = array[i]
+
+    for i in arr:
+        print(i)
+def bin_to_int(inp):
+    k = 0
+    l = 7
+    for i in inp:
+        i = int(i)
+        if i = 1:
+            k += 2**l
+        l-=1
+    return k
+def int_to_bin(inp):
+    ut = ""
+    for i in range(7, -1, -1):
+        if 2 ** i <= inp:
+            inp = inp % (2 ** i)
+            ut += "1"
+        else:
+            ut += "0"
+    return ut
+def indexval(inp):
+    if inp == '000':
+        return 0   
+    elif inp == '001':
+        return 1
+    elif inp =='010':
+        return 2
+    elif inp =='011':
+        return 3
+    elif inp =='100':
+        return 4
+    elif inp =='101':
+        return 5
+    elif inp=='110':
+        return 6
 def execute(line,RF):
+    opcode_bin = line[0:5]
+    if(opcode_bin == "00000"):
+        RF=add(line,RF)
+    elif(opcode_bin=="00001"):
+        RF=sub(line,RF)
+    elif(opcode_bin=="00010"):
+        RF=movimm(line,RF)
+    elif(opcode_bin=="00011"):
+        RF=mov(line,RF)
+    elif(opcode_bin=="00100"):
+        RF=load(line,RF)
+    elif (opcode_bin=="00101"):
+        RF=st(line,RF)
+    elif (opcode_bin="00110"):
+        RF=mul(line,RF)
+    elif (opcode_bin="00111"):
+        RF=div(line,RF)
+    elif (opcode_bin="01000"):
+        RF=rs(line,RF)
+    elif (opcode_bin="01001"):
+        RF=ls(line,RF)
+    elif (opcode_bin="01010"):
+        RF=xor(line,RF)
+    elif (opcode_bin="01011"):
+        RF=OR(line,RF)
+    elif (opcode_bin="01100"):
+        RF=AND(line,RF)
+    elif (opcode_bin="01101"):
+        RF=inv(line,RF)
+    elif (opcode_bin="01110"):
+        RF=comp(line,RF)
+    elif (opcode_bin="01111"):
+        RF=unc_jump(line,RF)
+    elif (opcode_bin="10000"):
+        RF=jump_less(line,RF)
+    elif (opcode_bin="10001"):
+        RF=jump_great(line,RF)
+    elif (opcode_bin="10010"):
+        RF=jump_equal(line,RF)
     return RF
 def PC_dump(pc):
     print((bin(pc)[2:]).zfill(8),end=" ")
