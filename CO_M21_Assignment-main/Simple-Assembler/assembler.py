@@ -5,6 +5,7 @@ for q in stdin:
     if q == '': # If empty string is read then stop the loop
         break
     q = q.replace("\n", "")
+    q = q.replace("\t"," ")
     arr.append(q)
 
 
@@ -41,6 +42,9 @@ def checkbin(str):
 def checktypos(array):
     for i in range(len(array)):
         line=array[i].split(" ")
+        for i in range(len(line)):
+            if line[i] in " ":
+                line.pop(i)
         if len(line)==0:
             continue
         elif line[0][len(line[0])-1]!=":":
@@ -69,14 +73,14 @@ def checktypos(array):
                 if line[0]!="add" and line[0]!="sub" and line[0]!="mul"and line[0]!="xor" and line[0]!="or"and line[0]!="and":
                     print("Error typo in "+line[0]+ " at line " +str(i+1))
                     return True
-                if line[1] !="R0" and line[1]!="R1" and line[1]!="R2"and line[1]!="R3" and line[1]!="R4" and line[1]!="R5"and line[1]!="R6":
+                if line[1] !="R0" and line[1]!="R1" and line[1]!="R2"and line[1]!="R3" and line[1]!="R4" and line[1]!="R5"and line[1]!="R6" and line[1]!=" ":
                     print("Error typo in "+line[1]+ " at line " +str(i+1))
                     return True
-                if line[2] !="R0" and line[2]!="R1" and line[2]!="R2"and line[2]!="R3" and line[2]!="R4" and line[2]!="R5"and line[2]!="R6":
-                    print("Error typo in "+line[1]+ " at line " +str(i+1))
+                if line[2] !="R0" and line[2]!="R1" and line[2]!="R2"and line[2]!="R3" and line[2]!="R4" and line[2]!="R5"and line[2]!="R6"and line[1]!=" ":
+                    print("Error typo in "+line[2]+ " at line " +str(i+1))
                     return True
-                if line[3] !="R0" and line[3]!="R1" and line[3]!="R2"and line[3]!="R3" and line[3]!="R4" and line[3]!="R5"and line[3]!="R6":
-                    print("Error typo in "+line[1]+ " at line " +str(i+1))
+                if line[3] !="R0" and line[3]!="R1" and line[3]!="R2"and line[3]!="R3" and line[3]!="R4" and line[3]!="R5"and line[3]!="R6"and line[1]!=" ":
+                    print("Error typo in "+line[3]+ " at line " +str(i+1))
                     return True
         else:
             line.pop(0)
@@ -125,6 +129,8 @@ def checkundefvariables(array):
     var = []
     for i in range(len(array)):
         line = array[i].split()
+        if line[0][-1]==":":
+            line.pop(0)
         if line[0] == "var":
             if (checkalphanum(line[1])):
                 var.append(line[1])
@@ -132,26 +138,28 @@ def checkundefvariables(array):
                 print("Variable not valid in line :" + str(i + 1))
                 return True
         if line[0] == "ld" or line[0] == "st":
-            if line[1] not in var:
+            if line[2] not in var:
                 print("Variable not valid in line :" + str(i + 1))
                 return True
-        return False
+    return False
 def errorchecklabels(array):
     line=[]
     labels=[]
     for i in range(len(array)):
         line=array[i].split()
         if line[0][-1]==":":
-            if(checkalphanum(line[0][0:len(line[0]-1)])):
-                labels.append(line[0][0:len(line[0]-1)])
+            if(checkalphanum(line[0][0:-1])):
+                labels.append(line[0][0:-1])
             else:
                 print("Label not valid in line :"+ str(i+1))
                 return True
+    for i in range(len(array)):
+        line=array[i].split()
         if line[0]=="jmp"or line[0]=="jlt" or line[0]=="jgt"or line[0]=="je" :
             if line[1] not in labels:
                 print("Label not valid in line :"+ str(i+1))
                 return True
-        return False
+    return False
 def checksyntax(input_array):
     instr_array = ["add", "sub", "mov", "ld", "st", "mul", "div", "rs", "ls",
                    "xor", "or", "and", "not", "cmp", "jmp", "jlt", "jgt", "je",
@@ -225,9 +233,13 @@ def checkforhlt(input_array):
 def checkimm(array):
     for i in range(len(array)):
         line=array[i].split(" ")
-        for j in range(len(line)):
-            if line[j][0]=="$":
-                if int(line[j][1:])<0 or int(line[j][1:])>255:
+        if line[0][-1]==":":
+            line.pop(0)
+        if len(line)==3:
+            if line[2][0]== "$":
+                x=line[2]
+                x=x[1:]
+                if int(x)<0 or int(x)>255:
                     print("IMM Value not valid in line no: " + str(i+1))
                     return True
     return False
@@ -241,6 +253,8 @@ def checklabelsandvar(array):
     newline = []
     for i in range(len(array)):
         newline = array[i].split()
+        if line[0][-1]==":":
+            line.pop(0)
         if newline[0] == "var":
             if newline[1] in labels:
                 print("Label/variable aldready exists Error in line " + str(i + 1))
@@ -248,32 +262,43 @@ def checklabelsandvar(array):
     return False
 def checkvar(input_array):
     arr = []
+    lineno=[]
     count = 0
     for i in range(len(input_array)):
         line = input_array[i].split(" ")
+        if line[0][-1]==":":
+            line.pop(0)
         if line[0] == "var":
             count += 1
+            lineno.append(i)
             arr.append("t")
         else:
             arr.append("f")
     for i in range(count):
         if arr[i] != "t":
             print("VarError: VARIABLE INSTRUCTION SHOULD BE BEFORE ALL SYSTEM INSTRUCTIONS")
-            print("Error at line " + str(i + 1))
+            print("Error at line " + str(lineno[i] + 1)) #line no not showing correct
             return True
     return False
 def checkflags(input_array):
-    arr = []
     for i in range(len(input_array)):
         line = input_array[i].split(" ")
-        arr.append(line)
-    for i in range(len(input_array)):
-        if len(arr[i]) > 2:
-            if arr[i][2] == "FLAGS":
-                if arr[i][0] != "mov":
-                    print("FlagError: INCORRECT USE OF FLAGS")
-                    print("Error at line "+ str(i+1))
-                    return True
+        if line[0][-1]==":":
+            line.pop(0)
+        set=False
+        for j in range(len(line)):
+            if line[j]=="FLAGS":
+                set=True
+        if set == True:
+            if line[0]!="mov":
+                print('FLag error in line '+ str(i+1))
+                return True
+            if line[1]!="R0"and line[1]!="R1"and line[1]!="R2"and line[1]!="R3"and line[1]!="R4"and line[1]!="R5"and line[1]!="R6":
+                print('FLag error in line '+ str(i+1))
+                return True
+            if line[2]!="FLAGS":
+                print('FLag error in line '+ str(i+1))
+                return True
     return False
 def gin(a):
     ut = ""
