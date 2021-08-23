@@ -18,7 +18,7 @@ def graphplot(yaxis):
     xaxis=[]
     for i in range(len(yaxis)):
         xaxis.append(i)
-    plt.plot(xaxis,yaxis)
+    plt.scatter(xaxis,yaxis)
     plt.xlabel("cycle")
     plt.ylabel("Memory_address")
     plt.savefig("graph.png")
